@@ -1,14 +1,24 @@
 from django.urls import reverse
 from rest_framework import status
 from rest_framework.test import APITestCase, APIClient
+from rest_framework.authtoken.models import Token
+
 from order.factories import OrderFactory, UserFactory
 from product.factories import ProductFactory
 
+
 class TestOrderViewSet(APITestCase):
-    client = APIClient()
 
     def setUp(self):
+        # cria usuário e token
         self.user = UserFactory()
+        self.token = Token.objects.create(user=self.user)
+
+        # cria cliente autenticado
+        self.client = APIClient()
+        self.client.credentials(HTTP_AUTHORIZATION='Token ' + self.token.key)
+
+        # cria produto e pedido
         self.product = ProductFactory()
         self.order = OrderFactory(user=self.user, product=[self.product])
 
@@ -17,31 +27,49 @@ class TestOrderViewSet(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     def test_retrieve_order(self):
-        response = self.client.get(reverse("order-detail", kwargs={"version": "v1", "pk": self.order.id}))
+        response = self.client.get(
+            reverse("order-detail", kwargs={"version": "v1", "pk": self.order.id})
+        )
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     def test_create_order(self):
         data = {"products_id": [self.product.id], "user": self.user.id}
-        response = self.client.post(reverse("order-list", kwargs={"version": "v1"}), data, format="json")
+        response = self.client.post(
+            reverse("order-list", kwargs={"version": "v1"}), data, format="json"
+        )
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
     def test_update_order(self):
         data = {"products_id": [self.product.id], "user": self.user.id, "quantity": 5}
-        response = self.client.put(reverse("order-detail", kwargs={"version": "v1", "pk": self.order.id}), data, format="json")
+        response = self.client.put(
+            reverse("order-detail", kwargs={"version": "v1", "pk": self.order.id}),
+            data,
+            format="json",
+        )
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data["quantity"], 5)
 
     def test_partial_update_order(self):
         data = {"quantity": 10}
-        response = self.client.patch(reverse("order-detail", kwargs={"version": "v1", "pk": self.order.id}), data, format="json")
+        response = self.client.patch(
+            reverse("order-detail", kwargs={"version": "v1", "pk": self.order.id}),
+            data,
+            format="json",
+        )
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data["quantity"], 10)
 
     def test_delete_order(self):
-        response = self.client.delete(reverse("order-detail", kwargs={"version": "v1", "pk": self.order.id}))
+        response = self.client.delete(
+            reverse("order-detail", kwargs={"version": "v1", "pk": self.order.id})
+        )
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
 
     def test_total_field(self):
-        response = self.client.get(reverse("order-detail", kwargs={"version": "v1", "pk": self.order.id}))
+        response = self.client.get(
+            reverse("order-detail", kwargs={"version": "v1", "pk": self.order.id})
+        )
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(response.data["total"], self.product.price * self.order.quantity)
+        self.assertEqual(
+            response.data["total"], self.product.price * self.order.quantity
+        )
