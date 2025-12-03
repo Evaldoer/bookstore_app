@@ -1,5 +1,5 @@
-# Usar uma imagem Python Slim para otimização de espaço
-FROM python:3.12-slim AS python-base
+# Base com Python 3.12
+FROM python:3.12-slim
 
 # Variáveis de ambiente
 ENV PYTHONUNBUFFERED=1 \
@@ -9,30 +9,33 @@ ENV PYTHONUNBUFFERED=1 \
     PIP_DEFAULT_TIMEOUT=100 \
     POETRY_VERSION=1.8.4 \
     POETRY_HOME="/opt/poetry" \
-    POETRY_VIRTUALENVS_IN_PROJECT=true \
-    PATH="/opt/poetry/bin:$PATH"
+    POETRY_NO_INTERACTION=1 \
+    PATH="/opt/poetry/bin:$PATH" \
+    PYSETUP_PATH="/opt/pysetup"
 
-# Instalar dependências e o Poetry
+# Instalar dependências do sistema
 RUN apt-get update && apt-get install --no-install-recommends -y \
-        curl build-essential libpq-dev gcc libc-dev \
+    curl build-essential libpq-dev gcc \
     && curl -sSL https://install.python-poetry.org | python3 - \
     && poetry --version \
-    && apt-get purge --auto-remove -y build-essential \
+    && apt-get purge --auto-remove -y build-essential curl \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
 # Copiar arquivos de configuração do Poetry
-WORKDIR /app
+WORKDIR $PYSETUP_PATH
 COPY poetry.lock pyproject.toml ./
 
-# Instalar dependências do Poetry (runtime)
-RUN poetry install --no-dev
+# Instalar dependências principais direto no sistema (sem virtualenv)
+ENV POETRY_VIRTUALENVS_CREATE=false
+RUN poetry install --no-interaction --no-ansi --no-root
 
-# Copiar código-fonte do projeto
+# Copiar código do projeto
+WORKDIR /app
 COPY . .
 
-# Expor a porta padrão do Django
+# Expor porta do Django
 EXPOSE 8000
 
-# Comando padrão para rodar o servidor
-CMD ["poetry", "run", "python", "manage.py", "runserver", "0.0.0.0:8000"]
+# Comando padrão (dev)
+CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
