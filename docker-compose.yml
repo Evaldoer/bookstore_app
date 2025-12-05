@@ -1,0 +1,29 @@
+version: "3.9"
+
+services:
+  web:
+    build: .
+    container_name: bookstore_app-web-1
+    command: python manage.py runserver 0.0.0.0:8000
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+    networks:
+      - app_network
+
+  db:
+    image: postgres:15
+    container_name: bookstore_app-db-1
+    environment:
+      POSTGRES_DB: bookstore
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5432:5432"
+    networks:
+      - app_network
+
+networks:
+  app_network:
+    driver: bridge
