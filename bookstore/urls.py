@@ -14,13 +14,6 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
-<<<<<<< Updated upstream
-from django.contrib import admin
-from django.urls import path
-
-urlpatterns = [
-    path('admin/', admin.site.urls),
-=======
 
 import debug_toolbar
 from django.contrib import admin
@@ -28,10 +21,16 @@ from django.urls import include, path, re_path
 from rest_framework.authtoken.views import obtain_auth_token
 
 urlpatterns = [
+    # Django Debug Toolbar
     path("__debug__/", include(debug_toolbar.urls)),
+
+    # Admin Django
     path("admin/", admin.site.urls),
-    re_path("bookstore/(?P<version>(v1|v2))/", include("order.urls")),
-    re_path("bookstore/(?P<version>(v1|v2))/", include("product.urls")),
+
+    # Rotas versionadas
+    re_path(r"^bookstore/(?P<version>(v1|v2))/order/", include("order.urls")),
+    re_path(r"^bookstore/(?P<version>(v1|v2))/product/", include("product.urls")),
+
+    # Token de autenticação
     path("api-token-auth/", obtain_auth_token, name="api_token_auth"),
->>>>>>> Stashed changes
 ]
