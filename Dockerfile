@@ -22,13 +22,13 @@ RUN apt-get update && apt-get install --no-install-recommends -y \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
-# Copiar arquivos de configuração do Poetry
+# Copiar apenas o pyproject.toml
 WORKDIR $PYSETUP_PATH
-COPY poetry.lock pyproject.toml ./
+COPY pyproject.toml ./
 
-# Instalar dependências principais direto no sistema (sem virtualenv)
+# Instalar dependências (Poetry gera o poetry.lock dentro do container)
 ENV POETRY_VIRTUALENVS_CREATE=false
-RUN poetry install --no-interaction --no-ansi --no-root
+RUN poetry install --no-interaction --no-ansi
 
 # Copiar código do projeto
 WORKDIR /app
