@@ -1,0 +1,44 @@
+name: CI - Django + Docker
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+      - demo-github-actions
+
+jobs:
+  test:
+    name: Run Django Tests in Docker
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:15-alpine
+        env:
+          POSTGRES_USER: bookstore_dev
+          POSTGRES_PASSWORD: bookstore_dev
+          POSTGRES_DB: bookstore_dev_db
+        ports:
+          - 5433:5432
+        options: >-
+          --health-cmd="pg_isready -U bookstore_dev"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Show Docker Compose version
+        run: docker-compose --version
+
+      - name: Build containers
+        run: docker-compose build
+
+      - name: Run migrations
+        run: docker-compose run --rm web python manage.py migrate
+
+      - name: Run tests
+        run: docker-compose run --rm web python manage.py test
