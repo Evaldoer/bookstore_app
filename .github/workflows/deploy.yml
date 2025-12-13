@@ -13,11 +13,10 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      - name: Upload code to PythonAnywhere
-        uses: pa-automate/pythonanywhere-deploy@v1
+      - name: Deploy to PythonAnywhere
+        uses: pythonanywhere/action-deploy@v1
         with:
+          api-token: ${{ secrets.PA_API_TOKEN }}
           username: ${{ secrets.PA_USERNAME }}
-          api_token: ${{ secrets.PA_API_TOKEN }}
-          domain: ${{ secrets.PA_DOMAIN }}
-          app_directory: ${{ secrets.PA_APP_DIR }}
-          venv_path: ${{ secrets.PA_VENV }}
+          domain-name: ${{ secrets.PA_DOMAIN }}
+          working-directory: ${{ secrets.PA_APP_DIR }}
