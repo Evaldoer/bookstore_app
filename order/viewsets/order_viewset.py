@@ -12,7 +12,6 @@ from order.models import Order
 from order.serializers import OrderSerializer
 from product.models.product import Product
 
-
 class OrderViewSet(ModelViewSet):
     authentication_classes = [
         SessionAuthentication,
@@ -22,6 +21,13 @@ class OrderViewSet(ModelViewSet):
     permission_classes = [IsAuthenticated]
     serializer_class = OrderSerializer
     queryset = Order.objects.all().order_by("id")
+
+    # ✅ REMOVA o método list() — deixe o DRF paginar sozinho
+
+    def retrieve(self, request, *args, **kwargs):
+        instance = self.get_object()
+        serializer = self.get_serializer(instance)
+        return Response(serializer.data)
 
     def create(self, request, *args, **kwargs):
         products_id = request.data.get("products_id", [])
