@@ -11,12 +11,13 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Deploy to PythonAnywhere
-        uses: pythonanywhere/action-deploy@v1
+        uses: pythonanywhere/pythonanywhere-deploy@v1
         with:
-          api-token: ${{ secrets.PA_API_TOKEN }}
           username: ${{ secrets.PA_USERNAME }}
-          domain-name: ${{ secrets.PA_DOMAIN }}
-          working-directory: ${{ secrets.PA_APP_DIR }}
+          api_token: ${{ secrets.PA_API_TOKEN }}
+          domain_name: ${{ secrets.PA_DOMAIN }}
+          app_directory: ${{ secrets.PA_APP_DIR }}
+          virtualenv: ${{ secrets.PA_VENV }}
