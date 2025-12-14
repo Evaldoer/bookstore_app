@@ -15,7 +15,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Deploy to PythonAnywhere
-        uses: pythonanywhere/pythonanywhere-deploy@v1
+        uses: pythonanywhere/deploy-pythonanywhere@v1
         with:
           username: ${{ secrets.PA_USERNAME }}
           api_token: ${{ secrets.PA_API_TOKEN }}
