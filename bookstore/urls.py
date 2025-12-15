@@ -21,7 +21,6 @@ from django.contrib import admin
 from django.urls import include, path, re_path
 from rest_framework.authtoken.views import obtain_auth_token
 from bookstore import views
-from bookstore.create_admin import create_admin   # ✅ importa a função corretamente
 
 urlpatterns = [
     path("__debug__/", include(debug_toolbar.urls)),
@@ -37,7 +36,4 @@ urlpatterns = [
     path("api-token-auth/", obtain_auth_token, name="api_token_auth"),
 
     path("hello/", views.hello_world, name="hello_world"),
-
-    # ✅ rota temporária para criar superusuário
-    path("create-admin/", create_admin),
 ]
