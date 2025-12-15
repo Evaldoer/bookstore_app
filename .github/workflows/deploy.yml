@@ -4,32 +4,35 @@ on:
   push:
     branches:
       - main
+  workflow_dispatch:
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code
+      - name: Checkout repository
         uses: actions/checkout@v4
+
+      - name: Debug secrets (safe)
+        run: |
+          echo "USERNAME set: ${{ secrets.PA_USERNAME != '' }}"
+          echo "TOKEN set: ${{ secrets.PA_API_TOKEN != '' }}"
+          echo "PROJECT DIR set: ${{ secrets.PA_PROJECT_DIR != '' }}"
+          echo "WEBAPP set: ${{ secrets.PA_WEBAPP != '' }}"
+
+      - name: Zip project
+        run: zip -r app.zip . -x "*.git*"
 
       - name: Upload project to PythonAnywhere
         run: |
-          zip -r app.zip ./*
           curl -X PUT \
             -H "Authorization: Token ${{ secrets.PA_API_TOKEN }}" \
             --upload-file app.zip \
-            "https://www.pythonanywhere.com/api/v0/user/${{ secrets.PA_USERNAME }}/files/path${{ secrets.PA_PROJECT_DIR }}/app.zip"
-
-      - name: Unzip project on PythonAnywhere
-        run: |
-          curl -X POST \
-            -H "Authorization: Token ${{ secrets.PA_API_TOKEN }}" \
-            -d "command=cd ${{ secrets.PA_PROJECT_DIR }} && unzip -o app.zip" \
-            "https://www.pythonanywhere.com/api/v0/user/${{ secrets.PA_USERNAME }}/consoles/"
+            https://www.pythonanywhere.com/api/v0/user/${{ secrets.PA_USERNAME }}/files/path${{ secrets.PA_PROJECT_DIR }}/app.zip
 
       - name: Reload web app
         run: |
           curl -X POST \
             -H "Authorization: Token ${{ secrets.PA_API_TOKEN }}" \
-            "https://www.pythonanywhere.com/api/v0/user/${{ secrets.PA_USERNAME }}/webapps/${{ secrets.PA_WEBAPP }}/reload/"
+            https://www.pythonanywhere.com/api/v0/user/${{ secrets.PA_USERNAME }}/webapps/${{ secrets.PA_WEBAPP }}/reload/

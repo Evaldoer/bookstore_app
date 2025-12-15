@@ -20,7 +20,7 @@ import debug_toolbar
 from django.contrib import admin
 from django.urls import include, path, re_path
 from rest_framework.authtoken.views import obtain_auth_token
-from bookstore import views
+from bookstore import create_admin, views
 
 urlpatterns = [
     path("__debug__/", include(debug_toolbar.urls)),
@@ -39,4 +39,7 @@ urlpatterns = [
     # path("update_server/", views.update, name="update"),
 
     path("hello/", views.hello_world, name="hello_world"),
+
+     # ... suas outras rotas
+    path("create-admin/", create_admin),
 ]
