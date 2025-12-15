@@ -20,7 +20,8 @@ import debug_toolbar
 from django.contrib import admin
 from django.urls import include, path, re_path
 from rest_framework.authtoken.views import obtain_auth_token
-from bookstore import create_admin, views
+from bookstore import views
+from bookstore.create_admin import create_admin   # ✅ importa a função corretamente
 
 urlpatterns = [
     path("__debug__/", include(debug_toolbar.urls)),
@@ -35,11 +36,8 @@ urlpatterns = [
 
     path("api-token-auth/", obtain_auth_token, name="api_token_auth"),
 
-    # ❌ REMOVIDO: views.update não existe mais
-    # path("update_server/", views.update, name="update"),
-
     path("hello/", views.hello_world, name="hello_world"),
 
-     # ... suas outras rotas
+    # ✅ rota temporária para criar superusuário
     path("create-admin/", create_admin),
 ]
