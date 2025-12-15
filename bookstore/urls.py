@@ -26,14 +26,19 @@ urlpatterns = [
     path("__debug__/", include(debug_toolbar.urls)),
     path("admin/", admin.site.urls),
 
-    # ✅ Category sem version (os testes NÃO usam version)
-    path("", include("product.urls")),  # category e product estão no mesmo router
+    # 🌟 Página inicial
+    path("", views.hello_world, name="home"),
 
-    # ✅ Product e Order COM version (os testes usam version=v1)
+    # 🌟 Página hello (opcional, mas funciona)
+    path("hello/", views.hello_world, name="hello_world"),
+
+    # 🌟 Rotas sem version (product + category)
+    path("product/", include("product.urls")),
+
+    # 🌟 Rotas com version (v1 e v2)
     re_path(r"bookstore/(?P<version>(v1|v2))/", include("order.urls")),
     re_path(r"bookstore/(?P<version>(v1|v2))/", include("product.urls")),
 
+    # 🌟 Token
     path("api-token-auth/", obtain_auth_token, name="api_token_auth"),
-
-    path("hello/", views.hello_world, name="hello_world"),
 ]
