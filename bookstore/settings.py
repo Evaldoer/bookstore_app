@@ -1,5 +1,6 @@
 import os
 from pathlib import Path
+import dj_database_url
 
 # ==============================
 # BASE
@@ -17,6 +18,7 @@ ALLOWED_HOSTS = [
     "localhost",
     "127.0.0.1",
     "evaldoer.pythonanywhere.com",
+    ".onrender.com",  # ✅ necessário para o Render
 ]
 
 # ==============================
@@ -87,12 +89,25 @@ TEMPLATES = [
 # ==============================
 # DATABASE
 # ==============================
-DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / "db.sqlite3",
+# ✅ Render fornece DATABASE_URL automaticamente
+DATABASE_URL = os.getenv("DATABASE_URL")
+
+if DATABASE_URL:
+    DATABASES = {
+        "default": dj_database_url.parse(
+            DATABASE_URL,
+            conn_max_age=600,
+            ssl_require=True
+        )
     }
-}
+else:
+    # ✅ fallback para desenvolvimento local
+    DATABASES = {
+        "default": {
+            "ENGINE": "django.db.backends.sqlite3",
+            "NAME": BASE_DIR / "db.sqlite3",
+        }
+    }
 
 # ==============================
 # INTERNATIONALIZATION
