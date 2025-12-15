@@ -29,7 +29,7 @@ jobs:
           curl -X PUT \
             -H "Authorization: Token ${{ secrets.PA_API_TOKEN }}" \
             --upload-file app.zip \
-            https://www.pythonanywhere.com/api/v0/user/${{ secrets.PA_USERNAME }}/files/path${{ secrets.PA_PROJECT_DIR }}/app.zip
+            https://www.pythonanywhere.com/api/v0/user/${{ secrets.PA_USERNAME }}/files/${{ secrets.PA_PROJECT_DIR }}/app.zip
 
       - name: Reload web app
         run: |
