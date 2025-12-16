@@ -49,5 +49,7 @@ Docker && docker-compose
    ```
    echo "teste final deploy" >> README.md
 
+   echo "teste final" >> README.md
+
 
 
