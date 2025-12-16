@@ -51,5 +51,7 @@ Docker && docker-compose
 
    echo "teste final" >> README.md
 
+   echo "teste deploy funcionando" >> README.md
+
 
 
