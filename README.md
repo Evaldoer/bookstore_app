@@ -47,8 +47,7 @@ Docker && docker-compose
    ```shell
    docker-compose exec web python manage.py 
    ```
-   Teste de deploy automático
-
+   echo "teste final deploy" >> README.md
 
 
 
