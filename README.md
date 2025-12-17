@@ -57,5 +57,7 @@ Docker && docker-compose
 
    echo "Entrega EBAC" >> README.md
 
+   Projeto Bookstore API pronto para entrega EBAC.
+
 
 
